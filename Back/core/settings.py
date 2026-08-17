@@ -2,6 +2,7 @@
 Django settings for core project.
 """
 
+import os
 from pathlib import Path
 from datetime import timedelta
 
@@ -18,12 +19,24 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # WARNING: keep the secret key used in production secret!
 # TODO: move this to an environment variable before deploying
-SECRET_KEY = 'django-insecure-ero@42j_1j9jsq0wva+nu*(w2150es*@3cv-%#@r_o8@5=ed5t'
+SECRET_KEY = os.environ.get(
+    "SECRET_KEY",
+    "django-insecure-change-me"
+)
 
 # WARNING: don't run with debug=True in production!
-DEBUG = True
+DEBUG = os.environ.get(
+    "DEBUG",
+    "True"
+).lower() == "true"
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in os.environ.get(
+        "ALLOWED_HOSTS",
+        "localhost,127.0.0.1"
+    ).split(",")
+]
 
 
 # =============================================================================
