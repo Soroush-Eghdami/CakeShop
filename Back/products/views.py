@@ -5,7 +5,7 @@ from rest_framework.permissions import AllowAny
 from drf_spectacular.utils import extend_schema
 from .models import Product, Category
 from .selectors import product_list, product_detail
-from .serializers import ProductOutputSerializer, CategoryOutputSerializer
+from .serializers import ProductOutputSerializer, ProductDetailSerializer, CategoryOutputSerializer
 
 
 class CategoryListView(APIView):
@@ -44,7 +44,7 @@ class ProductDetailView(APIView):
     @extend_schema(
         summary="Get product detail",
         tags=["Products"],
-        responses={200: ProductOutputSerializer},
+        responses={200: ProductDetailSerializer},
     )
     def get(self, request, product_id):
         try:
@@ -55,5 +55,5 @@ class ProductDetailView(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
         return Response(
-            ProductOutputSerializer(product, context={'request': request}).data
+            ProductDetailSerializer(product, context={'request': request}).data
         )
