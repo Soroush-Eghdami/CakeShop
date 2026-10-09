@@ -9,7 +9,7 @@ from .models import Category, Product
 class CategoryOutputSerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = ['id', 'name', 'slug', 'icon']
+        fields = ['name', 'slug']
 
 
 class ProductOutputSerializer(serializers.ModelSerializer):
@@ -25,6 +25,16 @@ class ProductOutputSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = [
-            'id', 'name', 'description', 'price', 'old_price',
-            'image', 'category', 'is_available', 'rating', 'reviews_count'
+            'id', 'name', 'price', 'old_price',
+            'image', 'category', 'is_available'
         ]
+
+
+class ProductDetailSerializer(ProductOutputSerializer):
+    class Meta(ProductOutputSerializer.Meta):
+        fields = [
+            'id', 'name', 'description', 'price', 'old_price',
+            'image', 'category', 'is_available',
+            'rating', 'reviews_count'
+        ]
+

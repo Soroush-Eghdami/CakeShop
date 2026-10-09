@@ -110,4 +110,71 @@ export default {
 };
 ```
 
+---
+
+## 🛠️ Backend (Django API)
+
+The project also includes a **Django REST Framework** backend in the `Back/` folder, which powers authentication, products, cart, and orders.
+
+### Tech Stack
+
+| Technology                                            | Purpose                  |
+| ----------------------------------------------------- | ------------------------ |
+| [Django](https://www.djangoproject.com/)              | Web framework            |
+| [DRF](https://www.django-rest-framework.org/)         | REST API                 |
+| [Simple JWT](https://django-rest-framework-simplejwt.readthedocs.io/) | Cookie-based JWT auth |
+| [drf-spectacular](https://drf-spectacular.readthedocs.io/) | OpenAPI docs / Swagger |
+| [django-cors-headers](https://github.com/adamchainz/django-cors-headers) | CORS for the frontend |
+| SQLite                                                | Dev database             |
+
+### Project Structure
+
+```
+Back/
+├── accounts/      # Custom user (UUID, email login), JWT register/login/logout/me
+├── products/      # Categories + products (list / detail)
+├── cart/          # Per-user cart + cart items
+├── orders/        # Orders created from the cart
+├── core/          # Settings & root URL config
+├── manage.py
+└── requirements.txt
+```
+
+### API Endpoints
+
+| Base              | Routes                                                        |
+| ----------------- | ------------------------------------------------------------- |
+| `/api/auth/`      | `register/`, `login/`, `logout/`, `me/`                       |
+| `/api/products/`  | `/` (list, `?category=<slug>`), `categories/`, `<uuid>/`      |
+| `/api/cart/`      | `/`, `items/`, `items/<uuid>/`, `clear/`                      |
+| `/api/orders/`    | `/` (list), `create/` (from cart), `<id>/`                    |
+| `/admin/`         | Django admin                                                  |
+| `/api/docs/`      | Swagger UI (via `/api/schema/`)                               |
+
+### Running the Backend
+
+```bash
+# 1. Go to the backend folder
+cd Back
+
+# 2. Create and activate a virtual environment
+python -m venv venv
+.\venv\Scripts\Activate.ps1   # Windows
+# source venv/bin/activate    # macOS / Linux
+
+# 3. Install dependencies
+pip install -r requirements.txt
+
+# 4. Apply migrations and create an admin user
+python manage.py migrate
+python manage.py createsuperuser
+
+# 5. Start the API server
+python manage.py runserver
+```
+
+The API will be running at `http://127.0.0.1:8000`, alongside the frontend at `http://localhost:5173`.
+
+---
+
 > Made with ❤️ and a lot of sugar 🍰
