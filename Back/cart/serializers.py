@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from drf_spectacular.utils import extend_schema_field
 from .models import Cart, CartItem
 from products.serializers import ProductOutputSerializer
 
@@ -24,10 +25,11 @@ class CartItemOutputSerializer(serializers.ModelSerializer):
     product = ProductOutputSerializer()
     item_total = serializers.SerializerMethodField()
 
+    @extend_schema_field(serializers.CharField())
     def get_item_total(self, obj):
         if obj.product:
-            return obj.product.price * obj.quantity
-        return 0
+            return str(obj.product.price * obj.quantity)
+        return "0.00"
 
     class Meta:
         model = CartItem
@@ -38,12 +40,13 @@ class CartOutputSerializer(serializers.ModelSerializer):
     items = CartItemOutputSerializer(many=True)
     total = serializers.SerializerMethodField()
 
+    @extend_schema_field(serializers.CharField())
     def get_total(self, obj):
-        return sum(
+        return str(sum(
             item.product.price * item.quantity
             for item in obj.items.all()
             if item.product
-        )
+        ))
 
     class Meta:
         model = Cart

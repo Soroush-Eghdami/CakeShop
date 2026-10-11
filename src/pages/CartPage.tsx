@@ -5,7 +5,7 @@ import OrderSummary from "../components/shopping-box/OrderSummary";
 import { useCartStore } from "../store/cartStore";
 
 export interface CartItem {
-  id: number;
+  id: string;
   name: string;
   price: string;
   oldPrice: string;

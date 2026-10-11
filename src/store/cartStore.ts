@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 export interface CartItem {
-  id: number;
+  id: string;
   name: string;
   price: string;
   oldPrice: string;
@@ -13,8 +13,8 @@ export interface CartItem {
 interface CartStore {
   items: CartItem[];
   addItem: (item: Omit<CartItem, "quantity">) => void;
-  removeItem: (id: number) => void;
-  updateQuantity: (id: number, quantity: number) => void;
+  removeItem: (id: string) => void;
+  updateQuantity: (id: string, quantity: number) => void;
   clearCart: () => void;
   getTotalItems: () => number;
   getTotalPrice: () => number;
@@ -67,6 +67,16 @@ export const useCartStore = create<CartStore>()(
     }),
     {
       name: "cake-shop-cart",
+      version: 2,
+      // Product ids changed from mock numbers to backend UUID strings —
+      // old persisted carts reference products that no longer exist.
+      migrate: (persisted: unknown) => {
+        const state = persisted as { items?: CartItem[] };
+        if (!state || !Array.isArray(state.items)) return { items: [] };
+        return {
+          items: state.items.filter((i) => typeof i?.id === "string"),
+        };
+      },
     },
   ),
 );

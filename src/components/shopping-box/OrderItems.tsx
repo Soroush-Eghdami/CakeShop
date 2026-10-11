@@ -8,8 +8,8 @@ const OrderItems = ({
   removeItem,
 }: {
   items: CartItem[];
-  updateQuantity: (id: number, quantity: number) => void;
-  removeItem: (id: number) => void;
+  updateQuantity: (id: string, quantity: number) => void;
+  removeItem: (id: string) => void;
 }) => {
   const parsePrice = (price: string) =>
     parseFloat(price.replace(/[^0-9.]/g, "")) || 0;

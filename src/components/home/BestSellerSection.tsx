@@ -11,7 +11,7 @@ interface BestSellerSectionProps {
 };
 
 const BestSellerSection = ({products}: BestSellerSectionProps) => {
-  const [liked, setLiked] = useState<Record<number, boolean>>({});
+  const [liked, setLiked] = useState<Record<string, boolean>>({});
   const [offset, setOffset] = useState(0);
   const [cardWidth, setCardWidth] = useState(0);
   const cardRef = useRef<HTMLDivElement>(null);
@@ -33,7 +33,7 @@ const BestSellerSection = ({products}: BestSellerSectionProps) => {
   const handlePrev = () => setOffset((o) => Math.max(0, o - cardWidth));
   const handleNext = () => setOffset((o) => Math.min(maxOffset, o + cardWidth));
 
-  const toggleLike = (id: number) => {
+  const toggleLike = (id: string) => {
     setLiked((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 

@@ -6,7 +6,11 @@ User = get_user_model()
 
 
 def order_list(*, user: User) -> QuerySet:
-    return Order.objects.filter(user=user).order_by('-created_at')
+    return (
+        Order.objects.filter(user=user)
+        .prefetch_related('items')
+        .order_by('-created_at')
+    )
 
 def order_detail(*, order_id: int, user: User) -> Order:
-    return Order.objects.get(id=order_id, user=user)
+    return Order.objects.prefetch_related('items').get(id=order_id, user=user)

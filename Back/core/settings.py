@@ -34,8 +34,9 @@ ALLOWED_HOSTS = [
     host.strip()
     for host in os.environ.get(
         "ALLOWED_HOSTS",
-        "localhost,127.0.0.1"
+        "localhost,127.0.0.1,testserver"
     ).split(",")
+    if host.strip()
 ]
 
 
@@ -173,16 +174,22 @@ REST_FRAMEWORK = {
 # SIMPLE JWT
 # =============================================================================
 
+# NOTE: token blacklist app is not installed, so rotation/blacklist must stay off.
+# If you add 'rest_framework_simplejwt.token_blacklist' to INSTALLED_APPS + migrate,
+# you may set ROTATE_REFRESH_TOKENS=True and BLACKLIST_AFTER_ROTATION=True.
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
-    'ROTATE_REFRESH_TOKENS': True,
-    'BLACKLIST_AFTER_ROTATION': True,
+    'ROTATE_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': False,
     'AUTH_COOKIE': 'access_token',
     'AUTH_COOKIE_REFRESH': 'refresh_token',
-    'AUTH_COOKIE_SECURE': True,      # only send over HTTPS
-    'AUTH_COOKIE_HTTP_ONLY': True,   # not accessible via JavaScript
-    'AUTH_COOKIE_SAMESITE': 'None',  # required for cross-origin requests
+    # Secure/SameSite=None cookies are rejected over plain HTTP (local dev uses
+    # http://localhost / http://127.0.0.1), so only require them in production.
+    'AUTH_COOKIE_SECURE': not DEBUG,
+    'AUTH_COOKIE_HTTP_ONLY': True,
+    'AUTH_COOKIE_SAMESITE': 'None' if not DEBUG else 'Lax',
+    'AUTH_COOKIE_PATH': '/',
 }
 
 
@@ -192,7 +199,9 @@ SIMPLE_JWT = {
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',   # Vite dev server
+    'http://127.0.0.1:5173',   # Vite dev server via 127.0.0.1
     'http://localhost:3000',   # in case you switch to CRA
+    'http://127.0.0.1:3000',
 ]
 
 CORS_ALLOW_CREDENTIALS = True  # required for cookies to be sent cross-origin

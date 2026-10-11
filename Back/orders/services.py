@@ -18,7 +18,7 @@ def order_create_from_cart(*,
 ) -> Order:
     
     cart = cart_get(user=user)
-    cart_items = cart.items.all()
+    cart_items = cart.items.select_related('product').all()
 
     if not cart_items:
         raise ValueError("Cart is empty. Cannot create an order.")
@@ -50,10 +50,11 @@ def order_create_from_cart(*,
             
     order.total_price = total
     order.save(update_fields=['total_price'])
-    
+
     cart_clear(user=user)
-    
-    return order
+
+    # Prefetch items so the response serializer doesn't hit N+1.
+    return Order.objects.prefetch_related('items').get(pk=order.pk)
 
 
 def order_update_status(*, order_id: int, new_status: str) -> Order:

@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from drf_spectacular.utils import extend_schema_field
 from .models import Category, Product
 
 
@@ -16,6 +17,7 @@ class ProductOutputSerializer(serializers.ModelSerializer):
     category = CategoryOutputSerializer()
     image = serializers.SerializerMethodField()
 
+    @extend_schema_field(serializers.CharField(allow_null=True))
     def get_image(self, obj):
         request = self.context.get('request')
         if obj.image and request:

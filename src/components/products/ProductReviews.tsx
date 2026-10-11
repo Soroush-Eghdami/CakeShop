@@ -62,6 +62,13 @@ const ProductReviews = ({ product }: Props) => {
           ))}
         </div>
 
+        {reviews.length === 0 && (
+          <p className="text-center text-gray-500 text-sm mt-2">
+            No written reviews yet — {product.reviews.count} customers rated this
+            cake.
+          </p>
+        )}
+
         <div className="flex justify-center gap-4 mt-10">
           <button
             onClick={goPrev}

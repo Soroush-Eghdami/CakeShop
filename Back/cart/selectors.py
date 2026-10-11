@@ -5,6 +5,10 @@ User = get_user_model()
 
 
 def cart_get(*, user : User) -> Cart:
-    """Get or create a cart for the user."""
+    """Get or create a cart for the user, prefetched to avoid N+1."""
     cart, created = Cart.objects.get_or_create(user=user)
-    return cart
+    return (
+        Cart.objects.filter(pk=cart.pk)
+        .prefetch_related('items__product__category')
+        .get()
+    )

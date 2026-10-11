@@ -7,6 +7,7 @@ import CartPage from "../pages/CartPage";
 import ComingSoon from "../pages/ComingSoon";
 import SignupPage from "../pages/SignupPage";
 import LoginPage from "../pages/LoginPage";
+import OrdersPage from "../pages/OrdersPage";
 
 
 const routes: RouteObject[] = [
@@ -18,6 +19,7 @@ const routes: RouteObject[] = [
       { path: "home", element: <Home /> },
       { path: "products/:slug", element: <ProductDetail /> },
       { path: "cart", element: <CartPage /> },
+      { path: "orders", element: <OrdersPage /> },
       { path: "cakes", element: <ComingSoon /> },
       { path: "theme-cakes", element: <ComingSoon /> },
       { path: "desserts", element: <ComingSoon /> },
