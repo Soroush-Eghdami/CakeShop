@@ -6,6 +6,7 @@ import { LuCake, LuMail } from "react-icons/lu";
 import AuthCard from "../components/login-register/AuthCard";
 import InputField from "../components/login-register/InputField";
 import { loginSchema, type LoginSchema } from "../hooks/useAuthValidation";
+import { login } from "../service/auth.service";
 
 const CakeIcon = () => <LuCake className="w-7 h-7 text-white" />;
 
@@ -47,11 +48,12 @@ const LoginPage: React.FC = () => {
     setIsLoading(true);
     setServerError(null);
     try {
-      console.log("Login:", data);
-      await new Promise((r) => setTimeout(r, 1200));
+      await login({ email: data.email, password: data.password });
       navigate("/");
-    } catch {
-      setServerError("Incorrect email or password. Please try again.");
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Incorrect email or password. Please try again.";
+      setServerError(message);
     } finally {
       setIsLoading(false);
     }

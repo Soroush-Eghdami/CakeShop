@@ -25,9 +25,6 @@ const HomePage = () => {
         <div className="max-w-6xl mx-auto px-4 pb-12">
           <div className="rounded-2xl border border-red-200 bg-red-50 px-5 py-8 text-center">
             <p className="text-sm text-red-700 font-medium">{error}</p>
-            <p className="text-xs text-red-500 mt-1">
-              Is the backend running at {import.meta.env.VITE_API_BASE_URL ?? "http://127.0.0.1:8000"}?
-            </p>
             <button
               onClick={refetch}
               className="mt-4 bg-red-700 hover:bg-red-800 text-white text-sm font-semibold px-6 py-2.5 rounded-full transition-colors"

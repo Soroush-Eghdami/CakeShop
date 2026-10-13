@@ -13,24 +13,27 @@ function formatStars(rating: string | number): string {
 
 export function toUiProduct(api: ApiProduct): Product {
   const image = api.image ?? "";
+  const description = api.description ?? "";
+  const rating = api.rating ?? "0";
+  const reviewsCount = api.reviews_count ?? 0;
   return {
     id: api.id,
     slug: api.id,
     name: api.name,
     price: formatMoney(api.price),
     oldPrice: formatMoney(api.old_price),
-    rating: formatStars(api.rating),
+    rating: formatStars(rating),
     image,
-    description: api.description,
+    description,
     highlights: [
-      { title: api.category?.name ?? "Cake", subtitle: api.description.slice(0, 48) },
+      { title: api.category?.name ?? "Cake", subtitle: description.slice(0, 48) },
       {
         title: api.is_available ? "Freshly Baked" : "Currently Unavailable",
         subtitle: api.is_available ? "Available today" : "Check back soon",
       },
       {
-        title: `Rating ${api.rating}`,
-        subtitle: `${api.reviews_count} happy customers`,
+        title: `Rating ${rating}`,
+        subtitle: `${reviewsCount} happy customers`,
       },
     ],
     galleryItems: [
@@ -38,6 +41,6 @@ export function toUiProduct(api: ApiProduct): Product {
       { image, imageAlt: `${api.name} — photo 2` },
       { image, imageAlt: `${api.name} — photo 3` },
     ],
-    reviews: { count: api.reviews_count, items: [] },
+    reviews: { count: reviewsCount, items: [] },
   };
 }

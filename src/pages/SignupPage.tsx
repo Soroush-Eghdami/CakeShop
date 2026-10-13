@@ -10,6 +10,7 @@ import { GiBeveledStar } from "react-icons/gi";
 import { FiUser } from "react-icons/fi";
 import { LuMail } from "react-icons/lu";
 import { MdErrorOutline } from "react-icons/md";
+import { register as registerApi } from "../service/auth.service";
 
 const StarIcon = () => <GiBeveledStar className="w-8 h-8 text-white" />;
 
@@ -40,7 +41,7 @@ const SignupPage: React.FC = () => {
   const [serverError, setServerError] = useState<string | null>(null);
 
   const {
-    register,
+    register: registerForm,
     handleSubmit,
     watch,
     formState: { errors },
@@ -61,11 +62,16 @@ const SignupPage: React.FC = () => {
     setIsLoading(true);
     setServerError(null);
     try {
-      console.log("Signup:", data);
-      await new Promise((r) => setTimeout(r, 1400));
+      await registerApi({
+        username: data.fullName,
+        email: data.email,
+        password: data.password,
+      });
       navigate("/login");
-    } catch {
-      setServerError("Something went wrong. Please try again.");
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Something went wrong. Please try again.";
+      setServerError(message);
     } finally {
       setIsLoading(false);
     }
