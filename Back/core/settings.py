@@ -5,12 +5,15 @@ Django settings for core project.
 import os
 from pathlib import Path
 from datetime import timedelta
+from dotenv import load_dotenv
+
 
 # =============================================================================
 # PATHS
 # =============================================================================
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR / ".env")
 
 
 # =============================================================================
