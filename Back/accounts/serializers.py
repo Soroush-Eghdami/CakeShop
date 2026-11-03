@@ -26,6 +26,13 @@ class LoginInputSerializer(serializers.Serializer):
         style={'input_type': 'password'}
     )
 
+class GoogleLoginInputSerializer(serializers.Serializer):
+    credential = serializers.CharField(
+        write_only=True,
+        trim_whitespace=True,
+        max_length=8192
+    )
+
 # =============================================================================
 # Output Serializers
 # =============================================================================
