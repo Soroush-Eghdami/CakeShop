@@ -42,6 +42,10 @@ ALLOWED_HOSTS = [
     if host.strip()
 ]
 
+GOOGLE_OAUTH_CLIENT_ID = os.environ.get(
+    "GOOGLE_OAUTH_CLIENT_ID",
+    ""
+).strip()
 
 # =============================================================================
 # APPLICATIONS
