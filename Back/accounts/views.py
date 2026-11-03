@@ -1,3 +1,4 @@
+import re
 from typing import Any, cast
 from django.db import IntegrityError
 from rest_framework.views import APIView
@@ -10,8 +11,21 @@ from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from django.contrib.auth import authenticate
 from django.conf import settings
 from drf_spectacular.utils import extend_schema
-from .services import user_create
-from .serializers import LoginInputSerializer, UserRegisterInputSerializer, UserOutputSerializer, MessageOutputSerializer
+from google.auth.exceptions import TransportError
+from .services import (
+    user_create,
+    GoogleEmailAlreadyRegistered, 
+    InvalidGoogleCredentialError,
+    user_get_or_create_from_google,
+    verify_google_credential,
+)
+from .serializers import (
+    LoginInputSerializer, 
+    UserRegisterInputSerializer, 
+    UserOutputSerializer, 
+    MessageOutputSerializer,
+    GoogleLoginInputSerializer,
+)
 from cart.services import cart_get_or_create
 
 
@@ -132,6 +146,70 @@ class LoginView(APIView):
         response = set_auth_cookies(response, access_token, refresh_token)
         return response
 
+class GoogleLoginView(APIView):
+    permission_classes = [AllowAny]
+    
+    @extend_schema(
+        summary="Sign in or sign up with Google",
+        description="Verifies a Google ID token and sets JWT cookies",
+        tags=["Authentication"],
+        request=GoogleLoginInputSerializer,
+        responses={200: UserOutputSerializer},
+    )
+    def post(self, request: Request) -> Response:
+        serializer = GoogleLoginInputSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        credential = serializer.validated_data["credential"]
+        
+        try:
+            claims = verify_google_credential(credential)
+        except InvalidGoogleCredentialError:
+            return Response(
+                {"error": "Invalid Google credential"},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+        except TransportError:
+            return Response(
+                {"error": "Google Verification is temporary Unavailable"},
+                status=status.HTTP_503_SERVICE_UNAVAILABLE,
+            )
+            
+        display_name = claims.get("name", "")
+        if not isinstance(display_name, str):
+            display_name = ""
+        
+        try: 
+            user = user_get_or_create_from_google(
+                google_id=claims["sub"],
+                email = claims["email"],
+                username=display_name,
+            )
+        except GoogleEmailAlreadyRegistered:
+            return Response(
+                {
+                    "error": (
+                        "An account with this email is already registered. "
+                        "Please sign in instead."
+                    )
+                },
+                status=status.HTTP_409_CONFLICT,
+            )
+        except IntegrityError:
+            return Response(
+                {"error": "Could not create the account due to a data conflict."},
+                status=status.HTTP_409_CONFLICT,
+            )
+        
+        refresh = RefreshToken.for_user(user)
+        response = Response(
+            UserOutputSerializer(user).data,
+            status=status.HTTP_200_OK,
+        )
+        return set_auth_cookies(
+            response,
+            str(refresh.access_token),
+            str(refresh),
+        )
 
 class RefreshView(APIView):
     permission_classes = [AllowAny]

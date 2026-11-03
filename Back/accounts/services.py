@@ -48,7 +48,7 @@ def verify_google_credential(credential: str) -> dict:
     return claims
     
 
-class GoogleEmailALreadyRegistered(Exception):
+class GoogleEmailAlreadyRegistered(Exception):
     pass
 
 def user_get_or_create_from_google(
@@ -63,7 +63,7 @@ def user_get_or_create_from_google(
                 return existing
             
             if User.objects.filter(email__iexact=normalized_email).exists():
-                raise GoogleEmailALreadyRegistered()
+                raise GoogleEmailAlreadyRegistered()
             
             base_username = slugify(username)[:120] or "google_user"
             username = f"{base_username}_{uuid.uuid4().hex[:12]}"
