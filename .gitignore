@@ -81,6 +81,9 @@ celerybeat.pid
 Back/fix_plan.*
 Back/frontend_fixes.md
 
+# Graphify knowledge graph output
+graphify-out/
+
 # mypy
 .mypy_cache/
 
